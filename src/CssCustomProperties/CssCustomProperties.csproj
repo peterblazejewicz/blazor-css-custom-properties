@@ -15,8 +15,14 @@ Supported operation:
 - write
 - delete</Description>
     <Copyright>Piotr Blazejewicz 2019</Copyright>
+    <PackageVersion>1.0.0-alpha</PackageVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>CSS,custom properties,Blazor</PackageTags>
+    <PackageProjectUrl>https://github.com/peterblazejewicz/blazor-css-custom-properties</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/peterblazejewicz/blazor-css-custom-properties.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
 
