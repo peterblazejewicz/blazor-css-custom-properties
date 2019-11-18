@@ -1,0 +1,20 @@
+﻿@page "/counter"
+
+@using blazejewicz.CssCustomProperties.Services
+@inject ICustomProperties CustomProperties;
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int currentCount = 0;
+
+    private async void IncrementCount()
+    {
+        currentCount++;
+        await this.CustomProperties.SetRootPropertyAsync("--blue", "blue");
+    }
+}

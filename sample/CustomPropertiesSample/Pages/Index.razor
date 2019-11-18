@@ -1,0 +1,62 @@
+﻿@page "/"
+@using blazejewicz.CssCustomProperties.Services
+
+@inject ICustomProperties CustomProperties
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<h2>Sample usage of `CustomProperties`</h2>
+
+<fieldset title="Sidebar background">
+    <div>
+        <input type="color" id="start-color" name="start-color"
+               @onchange="StartColorChanged"
+               value="@SidebarBackgroundStartColor">
+        <label for="start-color">Background start color: @SidebarBackgroundStartColor</label>
+    </div>
+
+    <div>
+        <input type="color" id="stop-color" name="end-color"
+               @onchange="StopColorChanged"
+               value="@SidebarBackgroundStopColor">
+        <label for="stop-color">Background end color: @SidebarBackgroundStopColor</label>
+    </div>
+</fieldset>
+
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+@code {
+    private const string StopColorPropertyName = "--sidebar-background-stop-color";
+    private const string StartColorPropertyName = "--sidebar-background-start-color";
+
+    private string SidebarBackgroundStartColor { get; set; }
+
+    private string SidebarBackgroundStopColor { get; set; }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            this.SidebarBackgroundStartColor = await this.CustomProperties.GetRootPropertyValueAsync(StartColorPropertyName);
+            this.SidebarBackgroundStopColor = await this.CustomProperties.GetRootPropertyValueAsync(StopColorPropertyName);
+            StateHasChanged();
+        }
+    }
+
+    void StopColorChanged(ChangeEventArgs e)
+    {
+        this.SidebarBackgroundStopColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetRootPropertyAsync(StopColorPropertyName, this.SidebarBackgroundStopColor);
+    }
+
+    void StartColorChanged(ChangeEventArgs e)
+    {
+        this.SidebarBackgroundStartColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetRootPropertyAsync(StartColorPropertyName, this.SidebarBackgroundStartColor);
+    }
+}
