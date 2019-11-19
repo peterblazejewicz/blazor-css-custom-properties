@@ -1,8 +1,7 @@
-using blazejewicz.CssCustomProperties.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System.Linq;
 using System.Threading.Tasks;
+using blazejewicz.CssCustomProperties.Services;
+using Microsoft.AspNetCore.Components;
 using Xunit;
 
 namespace CssCustomProperties.Tests
