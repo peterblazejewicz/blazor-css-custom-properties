@@ -3,25 +3,92 @@
 
 @inject ICustomProperties CustomProperties
 
-<h1>Hello, world!</h1>
+<h1 id="page-title" @ref="PageTitle">Hello, world!</h1>
+<style>
+    #page-title {
+        --page-title-color: var(--blue);
+        --page-title-background-color: var(--light);
+        color: var(--page-title-color);
+        background-color: var(--page-title-background-color);
+    }
+</style>
 
 Welcome to your new app.
 
 <h2>Sample usage of `CustomProperties`</h2>
 
-<fieldset title="Sidebar background">
+
+<fieldset>
+    <h4>Page title access uses <code>ElementReference</code> from this page.</h4>
     <div>
-        <input type="color" id="start-color" name="start-color"
-               @onchange="StartColorChanged"
-               value="@SidebarBackgroundStartColor">
-        <label for="start-color">Background start color: @SidebarBackgroundStartColor</label>
+        <input type="color" id="@PageTitleColorPropertyName" name="@PageTitleColorPropertyName"
+               @onchange="PageTitleColorChanged"
+               value="@PageTitleColor">
+        <label for="@PageTitleColorPropertyName">Page title color: @PageTitleColor</label>
     </div>
 
     <div>
-        <input type="color" id="stop-color" name="end-color"
+        <input type="color" id="@PageTitleBackgroundColorPropertyName" name="@PageTitleBackgroundColorPropertyName"
+               @onchange="PageTitleBackgroundColorChanged"
+               value="@PageTitleBackgroundColor">
+        <label for="@PageTitleBackgroundColorPropertyName">Page title background color: @PageTitleBackgroundColor</label>
+    </div>
+</fieldset>
+
+<fieldset>
+    <h4>Top row access uses <code>selector</code> to access top row.</h4>
+    <div>
+        <input type="color" id="@TopRowColorPropertyName" name="@TopRowColorPropertyName"
+               @onchange="TopRowColorChanged"
+               value="@TopRowColor">
+        <label for="@TopRowColorPropertyName">Top row color: @TopRowColor</label>
+    </div>
+
+    <div>
+        <input type="color" id="@TopRowBackgroundColorPropertyName" name="@TopRowBackgroundColorPropertyName"
+               @onchange="TopRowBackgroundColorChanged"
+               value="@TopRowBackgroundColor">
+        <label for="@TopRowBackgroundColorPropertyName">Top row background color: @TopRowBackgroundColor</label>
+    </div>
+
+    <div>
+        <input type="color" id="@TopRowBorderBottomColorPropertyName" name="@TopRowBorderBottomColorPropertyName"
+               @onchange="TopRowBorderBottomColorChanged"
+               value="@TopRowBorderBottomColor">
+        <label for="@TopRowBorderBottomColorPropertyName">Top row border bottom color: @TopRowBorderBottomColor</label>
+    </div>
+</fieldset>
+
+<fieldset>
+    <h4>Sidebar background samples use <code>:root</code> scoped properties</h4>
+    <div>
+        <input type="color" id="@StartColorPropertyName" name="@StartColorPropertyName"
+               @onchange="StartColorChanged"
+               value="@SidebarBackgroundStartColor">
+        <label for="@StartColorPropertyName">Background start color: @SidebarBackgroundStartColor</label>
+    </div>
+
+    <div>
+        <input type="color" id="@StopColorPropertyName" name="@StopColorPropertyName"
                @onchange="StopColorChanged"
                value="@SidebarBackgroundStopColor">
-        <label for="stop-color">Background end color: @SidebarBackgroundStopColor</label>
+        <label for="@StopColorPropertyName">Background end color: @SidebarBackgroundStopColor</label>
+    </div>
+</fieldset>
+
+<fieldset>
+    <h4>Sidebar navigation samples use <code>:root</code> scoped properties</h4>
+    <div>
+        <input type="color" id="@SidebarNavItemActiveColorPropertyName" name="@SidebarNavItemActiveColorPropertyName"
+               @onchange="SidebarNavItemActiveColorChanged"
+               value="@SidebarNavItemActiveColor">
+        <label for="@SidebarNavItemActiveColorPropertyName">Active item color: @SidebarNavItemActiveColor</label>
+    </div>
+    <div>
+        <input type="color" id="@SidebarNavItemColorPropertyName" name="@SidebarNavItemColorPropertyName"
+               @onchange="SidebarNavItemColorChanged"
+               value="@SidebarNavItemColor">
+        <label for="@SidebarNavItemColorPropertyName">Item color: @SidebarNavItemColor</label>
     </div>
 </fieldset>
 
@@ -30,20 +97,49 @@ Welcome to your new app.
 
 
 @code {
+
+    private const string MainTopRowSelector = ".main .top-row";
+
+    private const string PageTitleColorPropertyName = "--page-title-color";
+    private const string PageTitleBackgroundColorPropertyName = "--page-title-background-color";
+    private const string TopRowColorPropertyName = "--main-top-row-color";
+    private const string TopRowBackgroundColorPropertyName = "--main-top-row-background-color";
+    private const string TopRowBorderBottomColorPropertyName = "--main-top-border-bottom-color";
     private const string StopColorPropertyName = "--sidebar-background-stop-color";
     private const string StartColorPropertyName = "--sidebar-background-start-color";
+    private const string SidebarNavItemActiveBackgroundColorPropertyName = "--sidebar-nav-item-active-background-color";
+    private const string SidebarNavItemActiveColorPropertyName = "--sidebar-nav-item-active-color";
+    private const string SidebarNavItemColorPropertyName = "--sidebar-nav-item-color";
 
+    private string PageTitleColor { get; set; }
+    private string PageTitleBackgroundColor { get; set; }
+    private string TopRowColor { get; set; }
+    private string TopRowBackgroundColor { get; set; }
+    private string TopRowBorderBottomColor { get; set; }
     private string SidebarBackgroundStartColor { get; set; }
-
     private string SidebarBackgroundStopColor { get; set; }
+    private string SidebarNavItemActiveBackgroundColor { get; set; }
+    private string SidebarNavItemActiveColor { get; set; }
+    private string SidebarNavItemColor { get; set; }
+
+    private ElementReference PageTitle;
 
     protected override async void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         if (firstRender)
         {
+            this.PageTitleColor = await this.CustomProperties.GetPropertyValueAsync(this.PageTitle, PageTitleColorPropertyName);
+            this.PageTitleBackgroundColor = await this.CustomProperties.GetPropertyValueAsync(this.PageTitle, PageTitleBackgroundColorPropertyName);
+            this.TopRowColor = await this.CustomProperties.GetPropertyValueAsync(MainTopRowSelector, TopRowColorPropertyName);
+            this.TopRowBackgroundColor = await this.CustomProperties.GetPropertyValueAsync(MainTopRowSelector, TopRowBackgroundColorPropertyName);
+            this.TopRowBorderBottomColor = await this.CustomProperties.GetPropertyValueAsync(MainTopRowSelector, TopRowBorderBottomColorPropertyName);
+            this.SidebarBackgroundStopColor = await this.CustomProperties.GetRootPropertyValueAsync(StopColorPropertyName);
             this.SidebarBackgroundStartColor = await this.CustomProperties.GetRootPropertyValueAsync(StartColorPropertyName);
             this.SidebarBackgroundStopColor = await this.CustomProperties.GetRootPropertyValueAsync(StopColorPropertyName);
+            this.SidebarNavItemActiveBackgroundColor = await this.CustomProperties.GetRootPropertyValueAsync(SidebarNavItemActiveBackgroundColorPropertyName);
+            this.SidebarNavItemActiveColor = await this.CustomProperties.GetRootPropertyValueAsync(SidebarNavItemActiveColorPropertyName);
+            this.SidebarNavItemColor = await this.CustomProperties.GetRootPropertyValueAsync(SidebarNavItemColorPropertyName);
             StateHasChanged();
         }
     }
@@ -58,5 +154,53 @@ Welcome to your new app.
     {
         this.SidebarBackgroundStartColor = e.Value.ToString().Trim();
         this.CustomProperties.SetRootPropertyAsync(StartColorPropertyName, this.SidebarBackgroundStartColor);
+    }
+
+    void SidebarNavItemActiveBackgroundColorChanged(ChangeEventArgs e)
+    {
+        this.SidebarNavItemActiveBackgroundColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetRootPropertyAsync(SidebarNavItemActiveBackgroundColorPropertyName, this.SidebarNavItemActiveBackgroundColor);
+    }
+
+    void SidebarNavItemActiveColorChanged(ChangeEventArgs e)
+    {
+        this.SidebarNavItemActiveColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetRootPropertyAsync(SidebarNavItemActiveColorPropertyName, this.SidebarNavItemActiveColor);
+    }
+
+    void SidebarNavItemColorChanged(ChangeEventArgs e)
+    {
+        this.SidebarNavItemColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetRootPropertyAsync(SidebarNavItemColorPropertyName, this.SidebarNavItemColor);
+    }
+
+    void PageTitleColorChanged(ChangeEventArgs e)
+    {
+        this.PageTitleColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetPropertyAsync(this.PageTitle, PageTitleColorPropertyName, this.PageTitleColor);
+    }
+
+    void PageTitleBackgroundColorChanged(ChangeEventArgs e)
+    {
+        this.PageTitleBackgroundColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetPropertyAsync(this.PageTitle, PageTitleBackgroundColorPropertyName, this.PageTitleBackgroundColor);
+    }
+
+    void TopRowColorChanged(ChangeEventArgs e)
+    {
+        this.TopRowColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetPropertyAsync(MainTopRowSelector, TopRowColorPropertyName, this.TopRowColor);
+    }
+
+    void TopRowBackgroundColorChanged(ChangeEventArgs e)
+    {
+        this.TopRowBackgroundColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetPropertyAsync(MainTopRowSelector, TopRowBackgroundColorPropertyName, this.TopRowBackgroundColor);
+    }
+
+    void TopRowBorderBottomColorChanged(ChangeEventArgs e)
+    {
+        this.TopRowBorderBottomColor = e.Value.ToString().Trim();
+        this.CustomProperties.SetPropertyAsync(MainTopRowSelector, TopRowBorderBottomColorPropertyName, this.TopRowBorderBottomColor);
     }
 }
